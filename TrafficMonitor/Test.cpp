@@ -10,9 +10,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void TestHttpQequest()
 {
-    wstring result;
-    bool rtn = CCommon::GetURL(L"https://v4.yinghualuo.cn/bejson", result, true, L"TrafficMonitor_V1.78");
+    // Offline-local fork: network test disabled.
     int a = 0;
+    UNREFERENCED_PARAMETER(a);
 }
 
 static void TestGetLicense()

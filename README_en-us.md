@@ -124,6 +124,8 @@ Choosing "Options..." in the pop-up menu allows users to access the options conf
 
 In "Regular Configurations", users can change the settings on whether the program conducts auto-update and whether the program runs automatically when the computer starts up. Users can also configure when notifications need to be sent. 
 
+Note: this fork's public release disables online update checks, plugin version checks, and public IP lookup, so those network requests are no longer performed at runtime.
+
 For version 1.72 and later, users can configure text colors for each item individually. Check the option to "Designate Colors for Each Items", click the color box on the right of "text colors" to prompt a pop-up dialog box for detailed color configuration where users can designate colors for each items inidividually. 
 
 # Plug-in system

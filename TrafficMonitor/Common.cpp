@@ -797,51 +797,10 @@ wstring CCommon::GetJsonValueSimple(const wstring& json_str, const wstring& name
 
 bool CCommon::GetURL(const wstring& url, std::string& result, const wstring& user_agent)
 {
-    bool succeed{ false };
-    CInternetSession* pSession{};
-    CHttpFile* pfile{};
-    try
-    {
-        pSession = new CInternetSession(user_agent.c_str());
-        pfile = (CHttpFile*)pSession->OpenURL(url.c_str());
-        DWORD dwStatusCode;
-        pfile->QueryInfoStatusCode(dwStatusCode);
-        if (dwStatusCode == HTTP_STATUS_OK)
-        {
-            CString content;
-            CString data;
-            while (pfile->ReadString(data))
-            {
-                content += data;
-            }
-            result = std::string((const char*)content.GetString());
-            succeed = true;
-        }
-        pfile->Close();
-        delete pfile;
-        pSession->Close();
-    }
-    catch (CInternetException* e)
-    {
-        //写入错误日志
-        if (theApp.m_debug_log)
-        {
-            CString info = CCommon::LoadTextFormat(IDS_GET_URL_ERROR_LOG_INFO, { url, static_cast<size_t>(e->m_dwError) });
-            CCommon::WriteLog(info, theApp.m_log_path.c_str());
-        }
-        if (pfile != nullptr)
-        {
-            pfile->Close();
-            delete pfile;
-        }
-        if (pSession != nullptr)
-            pSession->Close();
-        succeed = false;
-        e->Delete();        //没有这句会造成内存泄露
-        SAFE_DELETE(pSession);
-    }
-    SAFE_DELETE(pSession);
-    return succeed;
+    UNREFERENCED_PARAMETER(url);
+    UNREFERENCED_PARAMETER(result);
+    UNREFERENCED_PARAMETER(user_agent);
+    return false;
 }
 
 bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstring& user_agent)
@@ -858,66 +817,16 @@ bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstri
 
 void CCommon::GetInternetIp(wstring& ip_address, wstring& ip_location, bool global)
 {
-    wstring web_page;
-    if (GetURL(L"https://ip.cn/", web_page, true))
-    {
-#ifdef _DEBUG
-        ofstream file{ L".\\IP_web_page.log" };
-        file << UnicodeToStr(web_page.c_str()) << std::endl;
-#endif // _DEBUG
-        size_t index, index1;
-        index = web_page.find(L"<code>");
-        index1 = web_page.find(L"</code>", index + 6);
-        if (index == wstring::npos || index1 == wstring::npos)
-            ip_address.clear();
-        else
-            ip_address = web_page.substr(index + 6, index1 - index - 6);    //获取IP地址
-        if (ip_address.size() > 15 || ip_address.size() < 7)        //IP地址最长15个字符，最短7个字符
-            ip_address.clear();
-
-        //获取IP地址归属地
-        if (!global)
-        {
-            index = web_page.find(L"<code>", index1 + 7);
-            index1 = web_page.find(L"</code>", index + 6);
-            if (index == wstring::npos || index1 == wstring::npos)
-                ip_location.clear();
-            else
-                ip_location = web_page.substr(index + 6, index1 - index - 6);
-        }
-        else
-        {
-            index = web_page.find(L"GeoIP", index1 + 7);
-            index1 = web_page.find(L"</p>", index + 6);
-            if (index == wstring::npos || index1 == wstring::npos)
-                ip_location.clear();
-            else
-                ip_location = web_page.substr(index + 7, index1 - index - 7);
-        }
-    }
-    else
-    {
-        ip_address.clear();
-    }
+    UNREFERENCED_PARAMETER(global);
+    ip_address.clear();
+    ip_location.clear();
 }
 
 void CCommon::GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6)
 {
-    wstring raw_string;
-    wstring user_agent{ L"TrafficMonitor/" };
-    user_agent += VERSION;
-    if (GetURL((ipv6 ? L"https://v6.yinghualuo.cn/bejson" : L"https://v4.yinghualuo.cn/bejson"), raw_string, true, user_agent))
-    {
-        //解析获取的json字符串
-        ip_address = GetJsonValueSimple(raw_string, L"ip");
-        ip_location = GetJsonValueSimple(raw_string, L"location");
-
-    }
-    else
-    {
-        ip_address.clear();
-        ip_location.clear();
-    }
+    UNREFERENCED_PARAMETER(ipv6);
+    ip_address.clear();
+    ip_location.clear();
 }
 
 

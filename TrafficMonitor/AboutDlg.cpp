@@ -76,15 +76,15 @@ BOOL CAboutDlg::OnInitDialog()
 
     m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //设置超链接
     //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
-    m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
-    m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
+    m_github.SetURL((CCommon::GetModuleDir() + L"README.md").c_str());
+    m_gitee.SetURL((CCommon::GetModuleDir() + L"FORK_NOTES.md").c_str());
     m_acknowledgement.SetLinkIsURL(false);
     m_license.SetLinkIsURL(false);
 
-    m_openhardwaremonitor_link.SetURL(_T("https://github.com/LibreHardwareMonitor/LibreHardwareMonitor"));
-    m_tinyxml2_link.SetURL(_T("https://github.com/leethomason/tinyxml2"));
-    m_musicplayer2_link.SetURL(_T("https://github.com/zhongyang219/MusicPlayer2"));
-    m_simplenotepad_link.SetURL(_T("https://github.com/zhongyang219/SimpleNotePad"));
+    m_openhardwaremonitor_link.SetURL((CCommon::GetModuleDir() + L"OpenHardwareMonitorApi\\ReadMe.txt").c_str());
+    m_tinyxml2_link.SetURL((CCommon::GetModuleDir() + L"README.md").c_str());
+    m_musicplayer2_link.SetURL((CCommon::GetModuleDir() + L"FORK_NOTES.md").c_str());
+    m_simplenotepad_link.SetURL((CCommon::GetModuleDir() + L"FORK_NOTES.md").c_str());
     m_openhardwaremonitor_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_tinyxml2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_musicplayer2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
@@ -130,8 +130,10 @@ BOOL CAboutDlg::OnInitDialog()
     m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
     m_tool_tip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
     //m_tool_tip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
-    m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
-    m_tool_tip.AddTool(&m_gitee, CCommon::LoadText(IDS_GOTO_GITEE, _T("\r\nhttps://gitee.com/zhongyang219/TrafficMonitor")));
+    CString local_readme = (CCommon::GetModuleDir() + L"README.md").c_str();
+    CString local_fork_notes = (CCommon::GetModuleDir() + L"FORK_NOTES.md").c_str();
+    m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, CString(_T("\r\n")) + local_readme));
+    m_tool_tip.AddTool(&m_gitee, CCommon::LoadText(IDS_GOTO_GITEE, CString(_T("\r\n")) + local_fork_notes));
     m_tool_tip.AddTool(&m_openhardwaremonitor_link, m_openhardwaremonitor_link.GetURL());
     m_tool_tip.AddTool(&m_tinyxml2_link, m_tinyxml2_link.GetURL());
     m_tool_tip.AddTool(&m_musicplayer2_link, CCommon::LoadText(IDS_MUSICPLAYER2_DESCRIPTION) + _T("\r\n") + m_musicplayer2_link.GetURL());

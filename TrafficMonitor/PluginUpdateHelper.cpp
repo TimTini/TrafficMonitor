@@ -83,31 +83,8 @@ int PluginVersion::GetSubVersion(size_t index) const
 bool CPluginUpdateHelper::CheckForUpdate()
 {
     m_latest_versions.clear();
-    std::wstring url;
-    //更新源为Gitee
-    if (theApp.m_general_data.update_source == 1)
-        url = L"https://gitee.com/zhongyang219/TrafficMonitorPlugins/raw/main/plugins_version.xml";
-    //更新源为Github
-    else
-        url = L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitorPlugins/main/plugins_version.xml";
-
-    //获取url内容
-    std::string version_info;
-    if (CCommon::GetURL(url, version_info))
-    {
-        //解析xml，获取版本信息
-        tinyxml2::XMLDocument doc;
-        doc.Parse(version_info.c_str(), version_info.size());
-        //遍历插件版本
-        CTinyXml2Helper::IterateChildNode(doc.RootElement(), [&](tinyxml2::XMLElement* ele) {
-            std::wstring file_name = CCommon::StrToUnicode(CTinyXml2Helper::ElementAttribute(ele, "file_name"));
-            std::string plugin_version(CTinyXml2Helper::ElementAttribute(ele, "version"));
-            PluginVersion version(plugin_version);
-            m_latest_versions.emplace(file_name, version);
-        });
-        return true;
-    }
-    return false;
+    UNREFERENCED_PARAMETER(theApp);
+    return true;
 }
 
 const PluginVersion& CPluginUpdateHelper::GetPluginLatestVersions(const std::wstring& file_name) const

@@ -20,45 +20,15 @@ void CUpdateHelper::SetUpdateSource(UpdateSource update_source)
 
 bool CUpdateHelper::CheckForUpdate()
 {
-    wstring version_info;
-    //使用GitHub更新源
-    if (m_update_source == UpdateSource::GitHubSource)
-    {
-        if (CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))     //获取版本信息
-        {
-            m_row_data = true;
-        }
-        else if (CCommon::GetURL(L"https://github.com/zhongyang219/TrafficMonitor/blob/master/version_utf8.info", version_info, true))      //获取版本信息
-        {
-            m_row_data = false;
-        }
-        else
-        {
-            return false;
-        }
-
-        if (!m_row_data)
-        {
-            size_t index = version_info.find(L"﻿&lt;version&gt;");
-            if (index != std::wstring::npos)
-                version_info = version_info.substr(index);
-
-            CString str_version_info = version_info.c_str();
-            str_version_info.Replace(L"&lt;", L"<");
-            str_version_info.Replace(L"&gt;", L">");
-
-            version_info = str_version_info;
-        }
-    }
-    //使用Gitee更新源
-    else
-    {
-        if (!CCommon::GetURL(L"https://gitee.com/zhongyang219/TrafficMonitor/raw/master/version_utf8.info", version_info, true))     //获取版本信息
-            return false;
-    }
-
-    ParseUpdateInfo(version_info);
-
+    UNREFERENCED_PARAMETER(m_update_source);
+    m_row_data = true;
+    m_version.clear();
+    m_link.clear();
+    m_link64.clear();
+    m_link_arm64ec.clear();
+    m_contents_en.clear();
+    m_contents_zh_cn.clear();
+    m_contents_zh_tw.clear();
     return true;
 }
 

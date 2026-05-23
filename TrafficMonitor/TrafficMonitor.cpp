@@ -529,74 +529,7 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
-    if (m_checking_update)      //如果还在检查更新，则直接返回
-        return;
-    CFlagLocker update_locker(m_checking_update);
-    CWaitCursor wait_cursor;
-
-    wstring version;        //程序版本
-    wstring link;           //下载链接
-    wstring contents_zh_cn; //更新内容（简体中文）
-    wstring contents_en;    //更新内容（English）
-    wstring contents_zh_tw; //更新内容（繁体中文）
-    CUpdateHelper update_helper;
-    update_helper.SetUpdateSource(static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source));
-    if (!update_helper.CheckForUpdate())
-    {
-        if (message)
-            AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
-        return;
-    }
-    version = update_helper.GetVersion();
-#ifdef _M_X64
-    link = update_helper.GetLink64();
-#elif defined _M_ARM64EC
-    link = update_helper.GetLinkArm64ec();
-#else
-    link = update_helper.GetLink();
-#endif
-    contents_zh_cn = update_helper.GetContentsZhCn();
-    contents_en = update_helper.GetContentsEn();
-    contents_zh_tw = update_helper.GetContentsZhTw();
-    if (version.empty() || link.empty())
-    {
-        if (message)
-        {
-            CString info = CCommon::LoadText(IDS_CHECK_UPDATE_ERROR);
-            info += _T("\r\nrow_data=");
-            info += std::to_wstring(update_helper.IsRowData()).c_str();
-
-            AfxMessageBox(info, MB_OK | MB_ICONWARNING);
-        }
-        return;
-    }
-    if (version > VERSION)      //如果服务器上的版本大于本地版本
-    {
-        CString info;
-        //根据语言设置选择对应语言版本的更新内容
-        wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
-        wstring contents_lan;
-        if (language_tag == L"zh-CN")
-            contents_lan = contents_zh_cn;
-        else if (language_tag == L"zh-TW")
-            contents_lan = contents_zh_tw;
-        else
-            contents_lan = contents_en;
-        if (contents_lan.empty())
-            info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
-        else
-            info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_lan.c_str());
-
-        if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
-        {
-            ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);      //转到下载链接
-        }
-    }
-    else
-    {
-        if (message)
-            AfxMessageBox(CCommon::LoadText(IDS_ALREADY_UPDATED), MB_OK | MB_ICONINFORMATION);
-    }
+    UNREFERENCED_PARAMETER(message);
 }
 
 void CTrafficMonitorApp::CheckUpdateInThread(bool message)
@@ -607,14 +540,7 @@ void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
     CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //设置线程语言
-#ifndef _DEBUG      //DEBUG下不在启动时检查更新
-    theApp.CheckUpdate(lpParam);        //检查更新
-#endif
-    //检测插件更新
-    if (!theApp.m_plugins.GetPlugins().empty())
-    {
-        theApp.m_plugin_update.CheckForUpdate();
-    }
+    UNREFERENCED_PARAMETER(lpParam);
     return 0;
 }
 
@@ -1057,7 +983,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     //启动时检查更新
     if (m_general_data.check_update_when_start)
     {
-        CheckUpdateInThread(false);
+        // Offline-local fork: do not perform network update checks at startup.
     }
 
 #ifndef WITHOUT_TEMPERATURE
@@ -1329,42 +1255,32 @@ void CTrafficMonitorApp::SetThemeColor(COLORREF color)
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码
-    CString help_url;
+    CString help_file;
     if (m_str_table.IsSimplifiedChinese())
-        help_url = _T("https://github.com/zhongyang219/TrafficMonitor/wiki");
+        help_file = _T("Help.md");
     else
-        help_url = _T("https://github.com/zhongyang219/TrafficMonitor/wiki/Home_en");
-    ShellExecute(NULL, _T("open"), help_url, NULL, NULL, SW_SHOW);
+        help_file = _T("Help_en-us.md");
+    CString local_path = (CCommon::GetModuleDir() + help_file.GetString()).c_str();
+    ShellExecute(NULL, _T("open"), local_path, NULL, NULL, SW_SHOW);
 }
 
 
 void CTrafficMonitorApp::OnFrequentyAskedQuestions()
 {
     // TODO: 在此添加命令处理程序代码
-    CString url_domain;
-    if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
-        url_domain = _T("gitee.com");
-    else
-        url_domain = _T("github.com");
     CString file_name;
     if (m_str_table.IsSimplifiedChinese())
         file_name = _T("Help.md");
     else
         file_name = _T("Help_en-us.md");
-    CString url;
-    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/%s"), url_domain.GetString(), file_name.GetString());
-    ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
+    CString local_path = (CCommon::GetModuleDir() + file_name.GetString()).c_str();
+    ShellExecute(NULL, _T("open"), local_path, NULL, NULL, SW_SHOW);
 }
 
 
 void CTrafficMonitorApp::OnUpdateLog()
 {
     // TODO: 在此添加命令处理程序代码
-    CString url_domain;
-    if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
-        url_domain = _T("gitee.com");
-    else
-        url_domain = _T("github.com");
     wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
     CString file_name;
     if (language_tag == L"zh-CN")
@@ -1373,9 +1289,8 @@ void CTrafficMonitorApp::OnUpdateLog()
         file_name = _T("update_log_zh-tw.md");
     else
         file_name = _T("update_log_en-us.md");
-    CString url;
-    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/UpdateLog/%s"), url_domain.GetString(), file_name.GetString());
-    ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
+    CString local_path = (CCommon::GetModuleDir() + _T("UpdateLog\\") + file_name.GetString()).c_str();
+    ShellExecute(NULL, _T("open"), local_path, NULL, NULL, SW_SHOW);
 }
 
 
