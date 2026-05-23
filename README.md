@@ -1,5 +1,7 @@
 **简体中文 | [English](./README_en-us.md)**
 
+> 个人分支说明：这是基于上游 TrafficMonitor 的个人 fork，不是原仓库镜像。此分支包含本地修复、打包调整和额外的维护文档。
+
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")

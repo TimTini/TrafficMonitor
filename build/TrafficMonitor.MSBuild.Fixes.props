@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Windows SDK 10.0.19041 C++/WinRT headers can fail with newer MSVC versions
+    around <experimental/coroutine>. The upstream source already documents this
+    optional switch in stdafx.h. Disable only Windows Web Experience detection;
+    this does not disable the OpenHardwareMonitor temperature feature.
+  -->
+  <ItemDefinitionGroup Condition="'$(MSBuildProjectName)' == 'TrafficMonitor'">
+    <ClCompile>
+      <PreprocessorDefinitions>DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

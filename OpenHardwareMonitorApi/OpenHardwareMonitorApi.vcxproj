@@ -195,9 +195,39 @@
       </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='Win32'">
     <Reference Include="LibreHardwareMonitorLib">
-      <HintPath>LibreHardwareMonitorLib.dll</HintPath>
+      <HintPath>LibreHardwareMonitorLib\win-x86\net472\LibreHardwareMonitorLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <Reference Include="LibreHardwareMonitorLib">
+      <HintPath>LibreHardwareMonitorLib\win-x64\net472\LibreHardwareMonitorLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='ARM64EC'">
+    <Reference Include="LibreHardwareMonitorLib">
+      <HintPath>LibreHardwareMonitorLib\win-arm64\net472\LibreHardwareMonitorLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BlackSharp.Core">
+      <HintPath>LibreHardwareMonitorLib\deps\BlackSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DiskInfoToolkit">
+      <HintPath>LibreHardwareMonitorLib\deps\DiskInfoToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="HidSharp">
+      <HintPath>LibreHardwareMonitorLib\deps\HidSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RAMSPDToolkit-NDD">
+      <HintPath>LibreHardwareMonitorLib\deps\RAMSPDToolkit-NDD.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>LibreHardwareMonitorLib\deps\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>LibreHardwareMonitorLib\deps\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
