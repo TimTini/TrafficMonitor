@@ -1,11 +1,16 @@
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+
 #include "PricePlugin.h"
 
 #include "PriceDataManager.h"
 
 CPricePlugin::CPricePlugin()
-    : m_btc_item(0)
-    , m_eth_item(1)
-    , m_xau_item(2)
+    : m_items{
+        CPriceItem(0), CPriceItem(1), CPriceItem(2), CPriceItem(3),
+        CPriceItem(4), CPriceItem(5), CPriceItem(6), CPriceItem(7)
+    }
 {
     CPriceDataManager::Instance().LoadConfig(L"");
 }
@@ -18,17 +23,10 @@ CPricePlugin& CPricePlugin::Instance()
 
 IPluginItem* CPricePlugin::GetItem(int index)
 {
-    switch (index)
-    {
-    case 0:
-        return &m_btc_item;
-    case 1:
-        return &m_eth_item;
-    case 2:
-        return &m_xau_item;
-    default:
+    if (index < 0 || index >= CPriceDataManager::Instance().GetItemCount())
         return nullptr;
-    }
+
+    return &m_items[index];
 }
 
 void CPricePlugin::DataRequired()
@@ -43,7 +41,7 @@ const wchar_t* CPricePlugin::GetInfo(PluginInfoIndex index)
     case TMI_NAME:
         return L"OKX Price";
     case TMI_DESCRIPTION:
-        return L"Shows BTC, ETH, and XAU proxy prices from OKX every 1 second.";
+        return L"Shows custom OKX spot prices every 1 second.";
     case TMI_AUTHOR:
         return L"TrafficMonitor local plugin";
     case TMI_COPYRIGHT:
@@ -59,8 +57,16 @@ const wchar_t* CPricePlugin::GetInfo(PluginInfoIndex index)
 
 ITMPlugin::OptionReturn CPricePlugin::ShowOptionsDialog(void* hParent)
 {
-    (void)hParent;
-    return ITMPlugin::OR_OPTION_NOT_PROVIDED;
+    HWND parent_wnd = reinterpret_cast<HWND>(hParent);
+    CPriceDataManager::Instance().SaveConfig();
+    std::wstring config_path = CPriceDataManager::Instance().GetConfigPath();
+    std::wstring message = L"PricePlugin.ini will open in Notepad.\r\n\r\n"
+        L"Edit item_count, decimal_places, and item*_inst_id/item*_label, then restart TrafficMonitor to add/remove price slots.";
+    MessageBoxW(parent_wnd, message.c_str(), L"OKX Price settings", MB_OK | MB_ICONINFORMATION);
+
+    std::wstring quoted_path = L"\"" + config_path + L"\"";
+    ShellExecuteW(parent_wnd, L"open", L"notepad.exe", quoted_path.c_str(), nullptr, SW_SHOWNORMAL);
+    return ITMPlugin::OR_OPTION_UNCHANGED;
 }
 
 void CPricePlugin::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data)

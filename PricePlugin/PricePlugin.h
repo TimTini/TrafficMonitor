@@ -1,6 +1,9 @@
 #pragma once
 
+#include <array>
+
 #include "PluginInterface.h"
+#include "PriceDataManager.h"
 #include "PriceItem.h"
 
 class CPricePlugin : public ITMPlugin
@@ -19,9 +22,7 @@ public:
     const wchar_t* GetTooltipInfo() override;
 
 private:
-    CPriceItem m_btc_item;
-    CPriceItem m_eth_item;
-    CPriceItem m_xau_item;
+    std::array<CPriceItem, CPriceDataManager::MAX_ITEM_COUNT> m_items;
 };
 
 extern "C" __declspec(dllexport) ITMPlugin* TMPluginGetInstance();

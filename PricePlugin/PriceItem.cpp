@@ -31,3 +31,14 @@ const wchar_t* CPriceItem::GetItemValueSampleText() const
 {
     return CPriceDataManager::Instance().GetItemSampleText(m_item_index);
 }
+
+void* CPriceItem::OnItemInfo(ItemInfoType type, void* para1, void* para2)
+{
+    (void)para1;
+    (void)para2;
+
+    if (type == IIT_DEFAULT_TASKBAR_DISPLAY && CPriceDataManager::Instance().IsDefaultTaskbarItem(m_item_index))
+        return reinterpret_cast<void*>(1);
+
+    return nullptr;
+}

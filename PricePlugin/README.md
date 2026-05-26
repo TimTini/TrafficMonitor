@@ -1,9 +1,10 @@
 # OKX Price Plugin
 
-TrafficMonitor plugin hiển thị 3 giá lấy từ OKX mỗi 1 giây:
+TrafficMonitor plugin hiển thị giá lấy từ OKX mỗi 1 giây:
 
-- `BTC:` mặc định dùng `BTC-USDT`
-- `ETH:` mặc định dùng `ETH-USDT`
+- Mặc định có 3 slot: `BTC-USDT`, `ETH-USDT`, `XAUT-USDT`
+- Có thể tăng `item_count` tối đa 8 slot và đổi `item*_inst_id`
+- Giá mặc định hiển thị 1 chữ số thập phân (`decimal_places=1`)
 - `XAU:` mặc định dùng `XAUT-USDT` vì OKX không có mã spot `XAU-USDT`
 
 Build mặc định:
@@ -24,11 +25,22 @@ Sau khi chạy TrafficMonitor lần đầu, plugin tạo file cấu hình `Price
 [config]
 api_host=www.okx.com
 update_interval_ms=1000
+decimal_places=1
+item_count=3
 
 [market]
-btc_inst_id=BTC-USDT
-eth_inst_id=ETH-USDT
-xau_inst_id=XAUT-USDT
+item1_label=BTC:
+item1_inst_id=BTC-USDT
+item2_label=ETH:
+item2_inst_id=ETH-USDT
+item3_label=XAU:
+item3_inst_id=XAUT-USDT
 ```
 
-Nếu muốn dùng token vàng khác trên OKX, đổi `xau_inst_id`, ví dụ `PAXG-USDT`.
+Nếu muốn dùng token vàng khác trên OKX, đổi `item3_inst_id`, ví dụ `PAXG-USDT`.
+
+Bật hiển thị mặc định trên taskbar cho bản build local:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\enable_price_plugin_taskbar.ps1 -Configuration Release -Platform x64
+```

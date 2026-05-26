@@ -256,7 +256,19 @@ void CTrafficMonitorApp::LoadConfig()
 
     m_taskbar_data.item_order.Init();
     m_taskbar_data.item_order.FromString(ini.GetString(L"task_bar", L"item_order", L""));
-    m_taskbar_data.plugin_display_item.FromString(ini.GetString(L"task_bar", L"plugin_display_item", L""));
+    std::wstring plugin_display_item_str;
+    if (ini.GetString(L"task_bar", L"plugin_display_item", plugin_display_item_str))
+    {
+        m_taskbar_data.plugin_display_item.FromString(plugin_display_item_str);
+    }
+    else
+    {
+        for (auto plugin_item : m_plugins.GetPluginItems())
+        {
+            if (plugin_item != nullptr && plugin_item->OnItemInfo(IPluginItem::IIT_DEFAULT_TASKBAR_DISPLAY, nullptr, nullptr) != nullptr)
+                m_taskbar_data.plugin_display_item.SetStrContained(plugin_item->GetItemId(), true);
+        }
+    }
     m_taskbar_data.auto_save_taskbar_color_settings_to_preset = ini.GetBool(L"task_bar", L"auto_save_taskbar_color_settings_to_preset", true);
 
     m_taskbar_data.show_netspeed_figure = ini.GetBool(L"task_bar", L"show_netspeed_figure", false);

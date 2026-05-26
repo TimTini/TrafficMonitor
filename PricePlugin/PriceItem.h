@@ -12,6 +12,7 @@ public:
     const wchar_t* GetItemLableText() const override;
     const wchar_t* GetItemValueText() const override;
     const wchar_t* GetItemValueSampleText() const override;
+    void* OnItemInfo(ItemInfoType type, void* para1, void* para2) override;
 
 private:
     int m_item_index{};

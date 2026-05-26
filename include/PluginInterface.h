@@ -133,7 +133,7 @@ public:
 
     enum ItemInfoType
     {
-
+        IIT_DEFAULT_TASKBAR_DISPLAY     /**< 是否默认在任务栏窗口显示此项目 */
     };
     //预留的接口
     virtual void* OnItemInfo(ItemInfoType, void* para1, void* para2) { return 0; }
