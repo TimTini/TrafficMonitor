@@ -9,6 +9,39 @@ namespace OpenHardwareMonitorApi
 {
     static std::wstring error_message;
 
+    // TrafficMonitor.cpp maps this token to a localized message.
+    static const wchar_t* PAWNIO_NOT_INSTALLED_TOKEN = L"PAWNIO_NOT_INSTALLED";
+
+    static void TryDeleteFileIfExists(System::String^ path)
+    {
+        try
+        {
+            if (System::IO::File::Exists(path))
+                System::IO::File::Delete(path);
+        }
+        catch (System::Exception^)
+        {
+        }
+    }
+
+    // Old LibreHardwareMonitor versions dropped WinRing0-based *.sys next to the host exe.
+    static void RemoveLegacyDriverFilesNearHostExe()
+    {
+        try
+        {
+            System::String^ exe_path = System::Diagnostics::Process::GetCurrentProcess()->MainModule->FileName;
+            System::String^ dir = System::IO::Path::GetDirectoryName(exe_path);
+            System::String^ exe_name = System::IO::Path::GetFileNameWithoutExtension(exe_path);
+
+            TryDeleteFileIfExists(System::IO::Path::Combine(dir, exe_name + ".sys"));
+            TryDeleteFileIfExists(System::IO::Path::Combine(dir, "LibreHardwareMonitorLib.sys"));
+            TryDeleteFileIfExists(System::IO::Path::Combine(dir, "OpenHardwareMonitorLib.sys"));
+        }
+        catch (System::Exception^)
+        {
+        }
+    }
+
     //将CRL的String类型转换成C++的std::wstring类型
     static std::wstring ClrStringToStdWstring(System::String^ str)
     {
@@ -412,6 +445,13 @@ namespace OpenHardwareMonitorApi
 
     void MonitorGlobal::Init()
     {
+        RemoveLegacyDriverFilesNearHostExe();
+
+        if (!PawnIo::IsInstalled)
+        {
+            throw gcnew System::Exception(gcnew System::String(PAWNIO_NOT_INSTALLED_TOKEN));
+        }
+
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
         computer->Open();
@@ -419,7 +459,9 @@ namespace OpenHardwareMonitorApi
 
     void MonitorGlobal::UnInit()
     {
-        computer->Close();
+        if (computer != nullptr)
+            computer->Close();
+        RemoveLegacyDriverFilesNearHostExe();
     }
 
 }

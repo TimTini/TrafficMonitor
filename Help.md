@@ -183,6 +183,18 @@ TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor
 
 **注意：硬件监控功能（包括温度监控和显卡使用率监控）可能存在一些问题，它可能会占用更多的CPU和内存。据部分用户反馈，开启温度功能后会导致程序崩溃和系统死机等问题，请在知晓以上风险后再决定开启硬件监控功能。否则，请不要使用硬件监控功能。**
 
+### Windows 安全中心提示 VulnerableDriver:WinNT/Winring0（TrafficMonitor.sys）
+
+这不是 TrafficMonitor 主程序“中毒”，而是硬件监控曾依赖的 **WinRing0** 内核驱动被 Microsoft 列入易受攻击驱动黑名单（[说明](https://support.microsoft.com/zh-cn/windows/microsoft-defender-%E9%98%B2%E7%97%85%E6%AF%8A%E8%BD%AF%E4%BB%B6%E8%AD%A6%E7%A4%BA-vulnerabledriver-winnt-winring0-eb057830-d77b-41a2-9a34-015a5d203c42)）。
+
+从 LibreHardwareMonitor 0.9.5 起已改用 **PawnIO**，本仓库自带的 `LibreHardwareMonitorLib.dll`（0.9.6）也不再包含 WinRing0。请按下面步骤处理：
+
+1. 到 [PawnIO 官网](https://pawnio.eu/) 安装 PawnIO（需管理员权限）。
+2. 删除 TrafficMonitor 目录下残留的 `TrafficMonitor.sys`、`LibreHardwareMonitorLib.sys` 等 `*.sys` 文件（可能是旧版本留下的）。
+3. 重新编译或从本仓库 Release 输出运行；开启硬件监控前若未安装 PawnIO，程序会提示安装，而不会再去加载 WinRing0。
+
+若只需要网速/CPU/内存显示，可使用 **Lite** 版本（`TrafficMonitor_Lite.sln`），不启用硬件监控即可避免此类告警。
+
 ### 程序启动时提示找不到“MSVC\*.dll”、“mfc\*.dll”、“vc*.dll”
 
 点击以下链接下载并安装Microsoft Visual C++ 运行环境。

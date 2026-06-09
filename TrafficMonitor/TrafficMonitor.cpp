@@ -563,7 +563,13 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
     if (theApp.m_pMonitor == nullptr)
     {
-        AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+        const std::wstring error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
+        if (error_message == L"PAWNIO_NOT_INSTALLED")
+            AfxMessageBox(CCommon::LoadText(IDS_PAWNIO_NOT_INSTALLED), MB_ICONERROR | MB_OK);
+        else if (!error_message.empty())
+            AfxMessageBox(error_message.c_str(), MB_ICONERROR | MB_OK);
+        else
+            AfxMessageBox(CCommon::LoadText(IDS_HARDWARE_MONITOR_INIT_FAILED), MB_ICONERROR | MB_OK);
     }
     //设置硬件监控的启用状态
     theApp.UpdateOpenHardwareMonitorEnableState();

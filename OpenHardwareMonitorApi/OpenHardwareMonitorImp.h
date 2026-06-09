@@ -8,6 +8,7 @@
 
 using namespace System;
 using namespace LibreHardwareMonitor::Hardware;
+using namespace LibreHardwareMonitor::PawnIo;
 
 namespace OpenHardwareMonitorApi {
 
